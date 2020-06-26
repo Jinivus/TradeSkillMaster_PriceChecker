@@ -14,6 +14,9 @@ function Util:Process(message, recipient, channel)
 
 	--- Price Get --
 	local itemString  = Util:TrimString(string.sub(message, TSM.db.global["TriggerLength"]+1)) -- sub the item
+	if string.len(itemString) < 1 then
+		return 
+	end 
 	local itemCountIndex, endPos, itemCount, restOfString = string.find(itemString, '(%d+)')
 
 	if itemCount == nil or itemCountIndex > 1 then
@@ -23,6 +26,11 @@ function Util:Process(message, recipient, channel)
 		if itemCount < 1 then
 			itemCount = 1
 		end
+	end
+
+
+	if not strfind(itemString, "|H(.+)|h") then
+		return 
 	end
 
 	local itemID  = TSM_API.ToItemString(itemString)
@@ -72,9 +80,15 @@ function Util:Process(message, recipient, channel)
 			message = message .. Util:ValuesFor(priceRegion, TSM.db.global["RegionalText"], itemCount)
 		end
 
+
+		local LastScanHoursAgo = math.floor((Util:GetLastTSMScanTime()/60)/60,2)
+
 		--[[if TSM.db.global["ShowScanned"] then
 			message = message .."Scanned: "..TimeLastScannedMinutes.." Mins Ago"
 		end]]--
+
+		message = message .. "Scanned: "..LastScanHoursAgo.." Hours ago"
+
 		Util:SendMessage(message, recipient, channel)
 
 		TSM.LastRunDelayTime = time() --- gets the current time

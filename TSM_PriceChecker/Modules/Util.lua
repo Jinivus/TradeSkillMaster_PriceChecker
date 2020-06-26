@@ -24,6 +24,15 @@ function Util:ConvertTime(Current, Past)
 	return Difference
 end
 
+function Util:GetLastTSMScanTime()
+	local CurrentTime = time()
+	local Faction = UnitFactionGroup("player")
+	local Server = GetRealmName()
+	local LastScanTime = TradeSkillMasterDB["f@" .. Faction .. " - " .. Server .. "@internalData@auctionDBScanTime"]
+	--print(((CurrentTime-LastScanTime)/60)/60)
+	return CurrentTime-LastScanTime
+end
+
 function Util:LastRunCheck()
 	local Current = time()
 	local Past = (TSM.LastRunDelayTime + TSM.db.global["LockOutTime"])
